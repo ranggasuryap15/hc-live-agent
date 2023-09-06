@@ -11,9 +11,17 @@
 |
 */
 
-Route::get('/', function() {
+Route::get('/', function () {
     return view('welcome');
 });
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/chat-hc', 'MessagesController@index')->name('hc-live-agent');
+
+Route::get('/load-latest-messages', 'MessagesController@getLoadLatestMessages');
+
+Route::post('/send', 'MessagesController@postSendMessage');
+
+Route::get('/fetch-old-messages', 'MessagesController@getOldMessages');
