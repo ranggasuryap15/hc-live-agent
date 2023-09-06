@@ -9,14 +9,20 @@
 
                 <div class="panel-body">
                     @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
+                    <div class="alert alert-success">
+                        {{ session('status') }}
+                    </div>
                     @endif
 
-                    You are logged in!
                 </div>
             </div>
+
+            {{-- Floating button to live chat --}}
+            <a href="{{ route('hc-live-agent') }}">
+                <button class="btn-floating" data-to-user="12345">
+                    Chat
+                </button>
+            </a>
         </div>
     </div>
 </div>
