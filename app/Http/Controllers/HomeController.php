@@ -26,7 +26,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // $users = User::where('id', '=', Auth::user()->id)->get();
         $user = DB::table('users')->select('*')->where('id', '=', Auth::user()->id)->first();
         return view('home', ['user' => $user]);
     }
