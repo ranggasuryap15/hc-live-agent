@@ -17,7 +17,7 @@ class MessagesController extends Controller
 
     public function index()
     {
-        $user = DB::table('users')->select('*')->where('id', '=', Auth::user()->id)->first();
+        $user = DB::table('users')->select('*')->where('nopeg', '=', Auth::user()->nopeg)->first();
         return view('chat-hc', ['user' => $user]);
     }
 
@@ -38,7 +38,6 @@ class MessagesController extends Controller
         })->orWhere(function ($query) use ($request) {
             $query->where('from_user', $request->user_id)->where('to_user', Auth::user()->nopeg);
         })->orderBy('created_at', 'ASC')->get();
-        //dd($messages);
         $result = [];
 
         foreach ($messages as $message) {
@@ -68,18 +67,22 @@ class MessagesController extends Controller
 
         $message->content = $request->message;
 
+        // save to database
         $message->save();
 
         // prepare some data to send with the response
-        // $message->dateTimeStr = date("Y-m-dTH:i", strtotime($message->created_at->toDateTimeString()));
+        $message->dateTimeStr = date("Y-m-dTH:i", strtotime($message->created_at->toDateTimeString()));
 
-        // $message->dateHumanReadable = $message->created_at->diffForHumans();
+        $message->dateHumanReadable = $message->created_at->diffForHumans();
 
-        $message->fromUserName = $message->fromUser->name;
+        $fromUser = DB::table('users')->select('*')->where('nopeg', '=', Auth::user()->nopeg)->first();
+        $toUser = DB::table('users')->select('*')->where('nopeg', '=', $request->to_user)->first();
+
+        $message->from_user_name = $fromUser->name;
 
         $message->from_user_nopeg = Auth::user()->nopeg;
 
-        $message->toUserName = $message->toUser->name;
+        $message->to_user_name = $toUser->name;
 
         $message->to_user_nopeg = $request->to_user;
 
@@ -105,29 +108,27 @@ class MessagesController extends Controller
         $message = Message::find($request->old_message_id);
 
         $lastMessages = Message::where(function ($query) use ($request, $message) {
-            $query->where('from_user', Auth::user()->id)
+            $query->where('from_user', Auth::user()->nopeg)
                 ->where('to_user', $request->to_user)
                 ->where('created_at', '<', $message->created_at);
         })
             ->orWhere(function ($query) use ($request, $message) {
                 $query->where('from_user', $request->to_user)
-                    ->where('to_user', Auth::user()->id)
+                    ->where('to_user', Auth::user()->nopeg)
                     ->where('created_at', '<', $message->created_at);
             })
             ->orderBy('created_at', 'ASC')->limit(10)->get();
 
-        $return = [];
+        $result = [];
 
         if ($lastMessages->count() > 0) {
-
             foreach ($lastMessages as $message) {
-
-                $return[] = view('message-line')->with('message', $message)->render();
+                $result[] = view('message-line')->with('message', $message)->render();
             }
 
-            PusherFactory::make()->trigger('chat', 'oldMsgs', ['to_user' => $request->to_user, 'data' => $return]);
+            PusherFactory::make()->trigger('chat', 'oldMsgs', ['to_user' => $request->to_user, 'data' => $result]);
         }
 
-        return response()->json(['state' => 1, 'data' => $return]);
+        return response()->json(['state' => 1, 'data' => $result]);
     }
 }

@@ -26,7 +26,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = DB::table('users')->select('*')->where('id', '=', Auth::user()->id)->first();
+        $user = DB::table('users')->select('*')->where('nopeg', '=', Auth::user()->nopeg)->first();
         return view('home', ['user' => $user]);
     }
 }
