@@ -17,9 +17,7 @@
                 <h1>HC Live Agent</h1>
             </div>
             <div class="body chat-area">
-                {{-- <p class="message user_message">Halo, Dek</p>
-                <p class="message">Halo, Mas</p>
-                <p class="message">Ada apa mas?</p> --}}
+                {{-- disini akan muncul chat berdasarkan pengguna login --}}
             </div>
             <div class="send-area">
                 <input type="text" class="chat_input" id="chat_input" name="" placeholder="Type a message" autofocus>

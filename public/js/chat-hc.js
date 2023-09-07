@@ -32,21 +32,22 @@ $(function () {
     });
 
     // listen for the send event, this event will be triggered on click the send btn
-    channel.bind("chat", function (data) {
+    channel.bind("send", function (data) {
         displayMessage(data.data);
     });
 
     // // handle the scroll top of any chat box
     // // the idea is to load the last messages by date depending of last message
     // // that's already loaded on the chat box
-    // let lastScrollTop = 0;
 
-    $(".chat-area").on("scroll", function (e) {
+    let lastScrollTop = 0;
+
+    $(".chat_box").on("scroll", function (e) {
         let st = $(this).scrollTop();
         console.log(st);
         if (st < lastScrollTop) {
             fetchOldMessages(
-                $(this).parents("#chat_box").find("#to_user_nopeg").val(),
+                $(this).find("#to_user_nopeg").val(),
                 $(this).find(".message:first-child").attr("data-message-id")
             );
         }
@@ -92,8 +93,7 @@ function loadLatestMessages(container, user_id) {
         // },
         success: function (response) {
             if (response.state == 1) {
-                console.log(response);
-                response.messages.map(function (val, index) {
+                response.messages.map(function (val) {
                     $(val).appendTo(chat_area);
                 });
             }
@@ -132,44 +132,14 @@ function send(to_user, message) {
             // send_area.find(".loader").remove();
             send_area.find(".btn-chat").prop("disabled", true);
             send_area.find(".chat_input").val("");
-            // send_area.animate(
-            //     {
-            //         scrollTop:
-            //             chat_area.offset().top + chat_area.outerHeight(true),
-            //     },
-            //     800,
-            //     "swing"
-            // );
-        },
-    });
-}
-
-/**
- * fetchOldMessages
- */
-function fetchOldMessages(to_user, old_message_id) {
-    let send_area = $(".send_area");
-
-    $.ajax({
-        url: "/fetch-old-messages",
-        data: {
-            to_user: to_user,
-            old_message_id: old_message_id,
-            _token: $("meta[name='csrf-token']").attr("content"),
-        },
-        method: "GET",
-        dataType: "json",
-        // beforeSend: function () {
-        //     if (send_area.find(".loader").length == 0) {
-        //         chat_area.prepend(loaderHtml());
-        //     }
-        // },
-        success: function (response) {
-            console.log(response);
-        },
-        complete: function () {
-            // send_area.find(".loader").remove();
-            console.log("complete");
+            send_area.animate(
+                {
+                    scrollTop:
+                        send_area.offset().top + send_area.outerHeight(true),
+                },
+                800,
+                "swing"
+            );
         },
     });
 }
@@ -188,29 +158,49 @@ function getMessageReceiverHtml(message) {
 }
 
 function displayMessage(message) {
-    console.log(message.from_user_id);
-    // if ($("#current_user").val() == message.from_user_id) {
-    //     let messageLine = getMessageSenderHtml(message);
-    //     $("#chat_box_" + messageLine.to_user_id)
-    //         .find(".chat-area")
-    //         .append(messageLine);
-    // } else if ($("#current_user").val() == message.to_user_id) {
-    //     cloneChatBox(message.from_user_id, message.fromUserName, function () {
-    //         let chatBox = $("#chat_box_" + message.from_user_id);
-    //         let messageLine = getMessageReceiverHtml(message);
-    //         $("#chat_box_" + message.from_user_id)
-    //             .find(".chat-area")
-    //             .append(messageLine);
-    //     });
-    // }
-}
-
-function displayOldMessages(data) {
-    if (data.data.length > 0) {
-        data.data.map(function (val, index) {
-            $("#chat_box_" + data.to_user)
-                .find(".chat-area")
-                .prepend(val);
-        });
+    if ($("#current_user").val() == message.from_user_nopeg) {
+        let senderMessageLine = getMessageSenderHtml(message);
+        $("#chat_box").find(".chat-area").append(senderMessageLine);
+    } else if ($("#current_user").val() == message.to_user_nopeg) {
+        let receiverMessageLine = getMessageReceiverHtml(message);
+        $("#chat_box").find(".chat-area").append(receiverMessageLine);
     }
 }
+
+// sepertinya ini tidak perlu digunakan dulu, logicnya adalah mungkin hanya menampilkan chat di rentang waktu sekian sampai sekian (24 jam)
+// function displayOldMessages(data) {
+//     if (data.data.length > 0) {
+//         data.data.map(function (val) {
+//             $("#chat_box").find(".chat-area").prepend(val);
+//         });
+//     }
+// }
+/**
+ * fetchOldMessages
+ */
+// function fetchOldMessages(to_user, old_message_id) {
+//     let send_area = $(".send_area");
+
+//     $.ajax({
+//         url: "/fetch-old-messages",
+//         data: {
+//             to_user: to_user,
+//             old_message_id: old_message_id,
+//             _token: $("meta[name='csrf-token']").attr("content"),
+//         },
+//         method: "GET",
+//         dataType: "json",
+//         // beforeSend: function () {
+//         //     if (send_area.find(".loader").length == 0) {
+//         //         chat_area.prepend(loaderHtml());
+//         //     }
+//         // },
+//         success: function (response) {
+//             console.log(response);
+//         },
+//         complete: function () {
+//             // send_area.find(".loader").remove();
+//             console.log("complete");
+//         },
+//     });
+// }
