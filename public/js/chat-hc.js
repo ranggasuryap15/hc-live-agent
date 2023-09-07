@@ -45,12 +45,12 @@ $(function () {
     $(".chat_box").on("scroll", function (e) {
         let st = $(this).scrollTop();
         console.log(st);
-        if (st < lastScrollTop) {
-            fetchOldMessages(
-                $(this).find("#to_user_nopeg").val(),
-                $(this).find(".message:first-child").attr("data-message-id")
-            );
-        }
+        // if (st < lastScrollTop) {
+        //     fetchOldMessages(
+        //         $(this).find("#to_user_nopeg").val(),
+        //         $(this).find(".message:first-child").attr("data-message-id")
+        //     );
+        // }
 
         lastScrollTop = st;
     });
@@ -146,14 +146,20 @@ function send(to_user, message) {
 
 function getMessageSenderHtml(message) {
     let content = `
-        <p class="message user_message" data-message-id="${message.id}">
-            ${message.content}
-        </p>`;
+        <div class="message message_sent">
+            <p data-message-id="${message.id}">${message.content}</p>
+            <time datetime="${message.dateTimeStr}">${message.dateHumanReadable}</time>
+        </div>`;
     return content;
 }
 
 function getMessageReceiverHtml(message) {
-    let content = `<p class="message" data-message-id="${message.id}">${message.content}</p>`;
+    let content = `
+    <div class="message">
+        <p data-message-id="${message.id}">${message.content}</p>
+        <time datetime="${message.dateTimeStr}">${message.dateHumanReadable}</time>
+    </div>
+    `;
     return content;
 }
 

@@ -1,9 +1,21 @@
 @if ($message->from_user == \Auth::user()->nopeg)
+<div class="message message_sent">
+    <p data-message-id="{{ $message->id }}">
+        {{ $message->content }}
+    </p>
+    <time datetime="{{ date(" Y-m-dTH:i", strtotime($message->created_at->toDateTimeString())) }}">{{
+        $message->created_at->diffForHumans() }}</time>
+</div>
 
-<p class="message user_message" data-message-id="{{ $message->id }}">{{ $message->content }}</p>
 
 @else
 
-<p class="message" data-message-id="{{ $message->id }}">{{ $message->content }}</p>
+<div class="message">
+    <p data-message-id="{{ $message->id }}">
+        {{ $message->content }}
+    </p>
+    <time datetime="{{ date(" Y-m-dTH:i", strtotime($message->created_at->toDateTimeString())) }}">{{
+        $message->created_at->diffForHumans() }}</time>
+</div>
 
 @endif
