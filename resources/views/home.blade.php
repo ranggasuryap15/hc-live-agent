@@ -19,7 +19,7 @@
 
             {{-- Floating button to live chat --}}
             <a href="{{ route('hc-live-agent') }}">
-                <button class="btn-floating" data-to-user="12345">
+                <button class="btn-floating" data-to-user="{{ \Auth::user()->admin_to_live }}">
                     Chat
                 </button>
             </a>
