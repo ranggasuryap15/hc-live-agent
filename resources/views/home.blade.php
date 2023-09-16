@@ -13,7 +13,7 @@
                         {{ session('status') }}
                     </div>
                     @endif
-
+                    <a href="{{ route('admin') }}">Admin Chat</a>
                 </div>
             </div>
 

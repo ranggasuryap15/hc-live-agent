@@ -18,6 +18,8 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('/admin', 'AdminController@index')->name('admin');
+
 Route::get('/chat-hc', 'MessagesController@index')->name('hc-live-agent');
 
 Route::get('/load-latest-messages', 'MessagesController@getLoadLatestMessages');
