@@ -22,8 +22,21 @@
 
     {{-- Message starts here --}}
     <div id="message"
-        class="chat-area flex flex-col space-y-4 p-3 scrollbar-thumb-blue h-full scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
+        class="chat-area flex flex-col space-y-4 p-3 scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2">
         {{-- message will be here --}}
+        <div class="chat-message">
+            <div class="flex items-end">
+                <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+                    <div>
+                        <p data-message-id=""
+                            class="px-2 py-2 rounded-lg inline-block rounded-bl-none bg-gray-200 bg-200 text-gray-600">
+
+                        </p>
+                    </div>
+                </div>
+                <img src="{{ asset('img/profile.jpg') }}" class="w-6 h-6 rounded-full order-1" alt="">
+            </div>
+        </div>
     </div>
     {{-- Message ends here --}}
 
@@ -31,17 +44,17 @@
     <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 mb-16 justify-between">
         <div class="relative flex send-area">
             <input type="textarea" placeholder="Message"
-                class="chat-input focus:ring-green-500 focus:border-green-500 w-full focus:placeholder-gray-400 text-gray-600 placeholder-gray-300 pl-12 bg-gray-100 rounded-full py-3 border-gray-200">
+                class="chat-input focus:ring-green-500 focus:border-green-500 w-full focus:placeholder-gray-400 text-black-600 placeholder-gray-300 pl-12 bg-gray-100 rounded-full py-3 border-gray-200">
 
-            <button data-to-user=""
+            <button data-to-user="" disabled
                 class="btn-chat inline-flex items-center justify-center rounded-full h-12 w-12 transition duration-500 ease-in-out hover:bg-gray-300">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
                     <path
                         d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z" />
                 </svg>
             </button>
-            <input type="text" id="to-user-id" value="" hidden>
         </div>
     </div>
     {{-- Chat Area Ends Here --}}
+    <input type="text" id="to-user-nopeg" value="" hidden>
 </div>

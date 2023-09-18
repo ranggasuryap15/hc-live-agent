@@ -45,13 +45,13 @@ $(function () {
         if ($(this).val() != "") {
             $(this)
                 .parents(".send-area")
-                .find("#btn-chat")
-                .prop("disabled", true);
+                .find(".btn-chat")
+                .prop("disabled", false);
         } else {
             $(this)
                 .parents(".send-area")
-                .find("#btn-chat")
-                .prop("disabled", false);
+                .find(".btn-chat")
+                .prop("disabled", true);
         }
     });
 
@@ -68,6 +68,7 @@ $(function () {
 
     // listen for the sedn event, this event wil be triggered on click the send btn
     channel.bind("send", function (data) {
+        console.log(data.data);
         displayMessage(data.data);
     });
 });
@@ -101,18 +102,12 @@ function loadLatestMessages(container, user_id) {
         },
         method: "GET",
         dataType: "json",
-        beforeSend: function () {
-            console.log("before send");
-        },
         success: function (response) {
             if (response.state == 1) {
                 response.messages.map(function (val, index) {
                     $(val).appendTo(chat_area);
                 });
             }
-        },
-        complete: function () {
-            console.log("complete: remove loader");
         },
     });
 }
@@ -121,7 +116,7 @@ function loadLatestMessages(container, user_id) {
 function send(to_user, message) {
     let chat_box = $("#chat_box_" + to_user);
     let chat_area = chat_box.find(".chat-area");
-    console.log(chat_box);
+
     $.ajax({
         url: "/send",
         data: {
@@ -131,11 +126,8 @@ function send(to_user, message) {
         },
         method: "POST",
         dataType: "json",
-        beforeSend: function () {
-            console.log("before send");
-        },
         success: function (response) {
-            console.log(response);
+            loadLatestMessages(chat_box, to_user);
         },
         complete: function () {
             chat_box.find(".btn-chat").prop("disabled", true);
@@ -146,33 +138,55 @@ function send(to_user, message) {
 }
 
 // menampilkan html dari pesan yang baru saja dikirim
-function getMessageSenderHtml() {
+function getMessageSenderHtml(message) {
     return `
-        <div>
-            pesan pengirim
+        <div class="chat-message">
+            <div class="flex items-end">
+                <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+                    <div>
+                        <p data-message-id="${message.id}"
+                            class="px-2 py-2 rounded-lg inline-block rounded-br-none bg-green-200 bg-200 text-green-600">
+                            ${message.content}
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 }
 
 // menampilkan html dari pesan yang baru saja diterima
-function getMessageReceiverHtml() {
-    return `pesan penerima`;
+function getMessageReceiverHtml(message) {
+    return `
+        <div class="chat-message">
+            <div class="flex items-end">
+                <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+                    <div>
+                        <p data-message-id="${message.id}"
+                            class="px-2 py-2 rounded-lg inline-block rounded-bl-none bg-gray-200 bg-200 text-gray-600">
+                            ${message.content}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 // displayMessage adalah menampilkan pesan dari function getMessageSenderHtml() dan getMessageReceiverHtml()
 function displayMessage(message) {
     // let alert_sound
 
-    if ($("#current_user").val() == message.from_user_id) {
+    if ($("#current_user").val() == message.from_user_nopeg) {
         let sender = getMessageSenderHtml(message);
-        $("#chat_box_" + message.to_user_id)
+        $("#chat_box_" + message.to_user_nopeg)
             .find(".chat-area")
             .append(sender);
-    } else if ($("#current_user").val() == message.to_user_id) {
+    } else if ($("#current_user").val() == message.to_user_nopeg) {
         // play sound alert dan tampilkan angka di user tersebut
 
         let receiver = getMessageReceiverHtml(message);
-        $("#chat_box_" + message.from_user_id)
+        $("#chat_box_" + message.from_user_nopeg)
             .find(".chat-area")
             .append(receiver);
     }

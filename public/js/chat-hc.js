@@ -40,25 +40,25 @@ $(function () {
     // // the idea is to load the last messages by date depending of last message
     // // that's already loaded on the chat box
 
-    let lastScrollTop = 0;
+    // let lastScrollTop = 0;
 
-    $(".chat_box").on("scroll", function (e) {
-        let st = $(this).scrollTop();
-        console.log(st);
-        // if (st < lastScrollTop) {
-        //     fetchOldMessages(
-        //         $(this).find("#to_user_nopeg").val(),
-        //         $(this).find(".message:first-child").attr("data-message-id")
-        //     );
-        // }
+    // $(".chat_box").on("scroll", function (e) {
+    //     let st = $(this).scrollTop();
+    //     console.log(st);
+    //     // if (st < lastScrollTop) {
+    //     //     fetchOldMessages(
+    //     //         $(this).find("#to_user_nopeg").val(),
+    //     //         $(this).find(".message:first-child").attr("data-message-id")
+    //     //     );
+    //     // }
 
-        lastScrollTop = st;
-    });
+    //     lastScrollTop = st;
+    // });
 
     // listen for the oldMsgs event, this event will be triggered on scroll top
-    channel.bind("oldMsgs", function (data) {
-        displayOldMessages(data);
-    });
+    // channel.bind("oldMsgs", function (data) {
+    //     displayOldMessages(data);
+    // });
 });
 
 /**

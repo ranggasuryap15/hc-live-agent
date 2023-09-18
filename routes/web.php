@@ -26,4 +26,4 @@ Route::get('/load-latest-messages', 'MessagesController@getLoadLatestMessages');
 
 Route::post('/send', 'MessagesController@postSendMessage');
 
-Route::get('/fetch-old-messages', 'MessagesController@getOldMessages');
+// Route::get('/fetch-old-messages', 'MessagesController@getOldMessages');
