@@ -105,9 +105,11 @@
                                         </div>
                                         <div class="flex items-center justify-between">
                                             <p class="text-sm text-gray-500 truncate">Hi</p>
+                                            @if ($unreadCounts[$user->nopeg] > 0)
                                             <div class="text-white text-xs bg-green-400 rounded-full px-1 py-0">
-                                                3
+                                                {{ $unreadCounts[$user->nopeg] }}
                                             </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

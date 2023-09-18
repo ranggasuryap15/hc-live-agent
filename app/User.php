@@ -26,4 +26,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function unreadMessages()
+    {
+        return $this->hasMany('App\Message', 'to_user')->where('is_read', false);
+    }
 }

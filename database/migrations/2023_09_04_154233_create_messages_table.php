@@ -18,6 +18,7 @@ class CreateMessagesTable extends Migration
             $table->string('from_user');
             $table->string('to_user');
             $table->text('content');
+            $table->boolean('is_read')->default(false);
             $table->timestamps();
 
             $table->foreign('from_user')->references('nopeg')->on('users');
