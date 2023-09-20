@@ -12,20 +12,29 @@ class AdminController extends Controller
     //
     function index()
     {
-        $users = User::where('nopeg', '!=', Auth::user()->nopeg)->get();
+        // List user yang pesannya belum terbaca sama sekali atau sedang menunggu.
+        $usersUnread = DB::table('users')
+            ->join('messages', 'users.nopeg', '=', 'messages.from_user')
+            ->select('users.*', 'messages.created_at as time_latest_message', 'messages.content as latest_message')->limit(1)
+            ->where('users.nopeg', '!=', Auth::user()->nopeg)
+            ->where('messages.is_read', '=', 'false')
+            ->orderBy('messages.created_at', 'DESC')
+            ->get();
 
+        // siapakah user yang sedang login saat ini
+        $userLogin = DB::table('users')->where('nopeg', Auth::user()->nopeg)->first();
+
+        // mencari unread messages count
         $unreadCounts = [];
 
-        foreach ($users as $user) {
-            $unreadCount = Message::where('from_user', $user->nopeg)
+        foreach ($usersUnread as $userUnread) {
+            $unreadCount = Message::where('from_user', $userUnread->nopeg)
                 ->where('is_read', false)
                 ->count();
 
-            $unreadCounts[$user->nopeg] = $unreadCount;
+            $unreadCounts[$userUnread->nopeg] = $unreadCount;
         }
 
-
-        $userLogin = DB::table('users')->where('nopeg', Auth::user()->nopeg)->first();
-        return view('admin.index', ['users' => $users, 'userLogin' => $userLogin, 'unreadCounts' => $unreadCounts]);
+        return view('admin.index', ['usersUnread' => $usersUnread, 'userLogin' => $userLogin, 'unreadCounts' => $unreadCounts, 'latestMessages' => $latestMessages]);
     }
 }

@@ -84,11 +84,13 @@
                                 </div>
                             </div>
                             {{-- search box end --}}
-
+                            <div>
+                                Unread Messages
+                            </div>
                             {{-- user lists --}}
                             @if($users->count() > 0)
                             @foreach($users as $user)
-                            <a href="javascript:void(0);" data-id="{{ $user->nopeg }}" data-user="{{ $user->name }}"
+                            <a href="#" data-id="{{ $user->nopeg }}" data-user="{{ $user->name }}"
                                 class="chat-toggle relative rounded-lg px-2 py-2 flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 mb-3 hover:bg-gray-200 hover:cursor-pointer">
                                 <div class="flex-shrink-0">
                                     <img class="h-10 w-10 rounded-full" src="{{ asset('img/profile.jpg') }}" alt="">
@@ -99,14 +101,22 @@
                                             <p class="text-sm font-bold text-green-600">
                                                 {{ $user->name }}
                                             </p>
+
+                                            {{-- menampilkan jam terakhir pesan dikirim --}}
                                             <div class="text-gray-400 text-xs">
-                                                12.30 AM
+                                                {{ date('H:i', strtotime($user->time_latest_message)) }}
                                             </div>
                                         </div>
                                         <div class="flex items-center justify-between">
-                                            <p class="text-sm text-gray-500 truncate">Hi</p>
+                                            {{-- menampilkan isi pesan terakhir --}}
+                                            <p class="text-sm text-gray-500 truncate">
+                                                {{ $user->latest_message }}
+                                            </p>
+
+                                            {{-- menampilkan jumlah pesan yang belum terbaca --}}
                                             @if ($unreadCounts[$user->nopeg] > 0)
-                                            <div class="text-white text-xs bg-green-400 rounded-full px-1 py-0">
+                                            <div id="unread_count_{{ $user->nopeg }}"
+                                                class="text-white text-xs bg-green-400 rounded-full px-1 py-0">
                                                 {{ $unreadCounts[$user->nopeg] }}
                                             </div>
                                             @endif
