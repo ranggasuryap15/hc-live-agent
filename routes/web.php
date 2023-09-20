@@ -26,4 +26,7 @@ Route::get('/load-latest-messages', 'MessagesController@getLoadLatestMessages');
 
 Route::post('/send', 'MessagesController@postSendMessage');
 
+// Route for Read Message 
+Route::post('/read-message', 'MessagesController@markAsRead')->name('messages.markAsRead');
+
 // Route::get('/fetch-old-messages', 'MessagesController@getOldMessages');
