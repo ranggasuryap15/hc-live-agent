@@ -35,6 +35,6 @@ class AdminController extends Controller
             $unreadCounts[$userUnread->nopeg] = $unreadCount;
         }
 
-        return view('admin.index', ['usersUnread' => $usersUnread, 'userLogin' => $userLogin, 'unreadCounts' => $unreadCounts, 'latestMessages' => $latestMessages]);
+        return view('admin.index', ['usersUnread' => $usersUnread, 'userLogin' => $userLogin, 'unreadCounts' => $unreadCounts]);
     }
 }
