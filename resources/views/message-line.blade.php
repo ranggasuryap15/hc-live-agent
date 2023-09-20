@@ -10,7 +10,7 @@
     <div class="flex items-end">
         <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
             <div>
-                <p data-message-id=""
+                <p data-message-id="{{ $message->id }}"
                     class="px-2 py-2 rounded-lg inline-block rounded-br-none bg-green-200 bg-200 text-black-600">
                     {{ $message->content }}
                 </p>
@@ -36,7 +36,7 @@
     <div class="flex items-end">
         <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
             <div>
-                <p data-message-id=""
+                <p data-message-id="{{ $message->id }}"
                     class="px-2 py-2 rounded-lg inline-block rounded-bl-none bg-gray-200 bg-200 text-gray-600">
                     {{ $message->content }}
                 </p>
