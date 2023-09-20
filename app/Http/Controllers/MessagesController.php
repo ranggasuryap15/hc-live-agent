@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Lib\PusherFactory;
 use App\Message;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -130,5 +131,22 @@ class MessagesController extends Controller
         }
 
         return response()->json(['state' => 1, 'data' => $result]);
+    }
+
+    // function read messages
+    public function markAsRead(Request $request)
+    {
+        $user = User::where('nopeg', $request->nopeg)->first();
+
+        if (!$user) {
+            return response()->json(['state' => 0, 'message' => "User not found", 'data' => $user]);
+        }
+
+        // tandai pesan sebagai sudah dibaca
+        $message = Message::where('from_user', $user->nopeg)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return response()->json(['state' => 1, 'data' => $message]);
     }
 }

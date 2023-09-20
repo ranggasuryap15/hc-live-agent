@@ -88,8 +88,8 @@
                                 Unread Messages
                             </div>
                             {{-- user lists --}}
-                            @if($users->count() > 0)
-                            @foreach($users as $user)
+                            @if($usersUnread->count() > 0)
+                            @foreach($usersUnread as $user)
                             <a href="#" data-id="{{ $user->nopeg }}" data-user="{{ $user->name }}"
                                 class="chat-toggle relative rounded-lg px-2 py-2 flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 mb-3 hover:bg-gray-200 hover:cursor-pointer">
                                 <div class="flex-shrink-0">

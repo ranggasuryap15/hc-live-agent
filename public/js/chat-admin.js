@@ -22,6 +22,8 @@ $(function () {
                 chatBox.addClass("chat-opened").slideDown("fast");
 
                 loadLatestMessages(chatBox, user_id);
+                // mark as read
+                markAsRead(user_id);
 
                 // chatbox auto scroll to bottom with swing animation
                 chatBox.find(".chat-area").animate(
@@ -140,7 +142,7 @@ function send(to_user, message) {
 // menampilkan html dari pesan yang baru saja dikirim
 function getMessageSenderHtml(message) {
     return `
-        <div class="chat-message">
+        <div class="chat-message message message_sent">
             <div class="flex items-end">
                 <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
                     <div>
@@ -158,7 +160,7 @@ function getMessageSenderHtml(message) {
 // menampilkan html dari pesan yang baru saja diterima
 function getMessageReceiverHtml(message) {
     return `
-        <div class="chat-message">
+        <div class="chat-message message ">
             <div class="flex items-end">
                 <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
                     <div>
@@ -190,4 +192,24 @@ function displayMessage(message) {
             .find(".chat-area")
             .append(receiver);
     }
+}
+
+// function read message
+function markAsRead(nopeg) {
+    $.ajax({
+        url: "/read-message",
+        data: {
+            nopeg: nopeg,
+            _token: $("meta[name='csrf-token']").attr("content"),
+        },
+        method: "POST",
+        dataType: "json",
+        success: function (response) {
+            // hapus tanda counter
+            $("#unread_count_" + nopeg).html("");
+        },
+        error: function (response) {
+            console.log(response);
+        },
+    });
 }
