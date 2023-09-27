@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Conversation;
+use DateTime;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -24,6 +26,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // update perhari, setiap created at yang sudah melewati hari ini, maka di update
+        $schedule->call(function () {
+            //
+            $today = new DateTime();
+            $today->format('Y-m-d');
+
+            $conversation = Conversation::whereRaw("TO_CHAR(created_at, 'yyyy-mm-dd') < $today")->update([
+                'in_queue' => false,
+                'is_resolved' => true,
+            ]);
+            $conversation->save();
+        })->daily();
+
         // $schedule->command('inspire')
         //          ->hourly();
     }
@@ -35,7 +50,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

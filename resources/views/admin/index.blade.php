@@ -85,12 +85,12 @@
                             </div>
                             {{-- search box end --}}
                             <div>
-                                Unread Messages
+                                IN-QUEUE
                             </div>
-                            {{-- user lists --}}
+                            {{-- user lists unread message--}}
                             @if($usersUnread->count() > 0)
                             @foreach($usersUnread as $user)
-                            <a href="#" data-id="{{ $user->nopeg }}" data-user="{{ $user->name }}"
+                            <a href="#" data-id="{{ $user->conversation_id }}" data-user="{{ $user->name }}"
                                 class="chat-toggle relative rounded-lg px-2 py-2 flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 mb-3 hover:bg-gray-200 hover:cursor-pointer">
                                 <div class="flex-shrink-0">
                                     <img class="h-10 w-10 rounded-full" src="{{ asset('img/profile.jpg') }}" alt="">
@@ -99,7 +99,7 @@
                                     <div class="focus:outline-none">
                                         <div class="flex items-center justify-between">
                                             <p class="text-sm font-bold text-green-600">
-                                                {{ $user->name }}
+                                                {{ $user->name }} ({{ $user->conversation_id }})
                                             </p>
 
                                             {{-- menampilkan jam terakhir pesan dikirim --}}
@@ -126,9 +126,52 @@
                             </a>
                             @endforeach
                             @else
-                            <p>No User</p>
+                            <p>No User in Queue</p>
                             @endif
                             {{-- user lists end --}}
+                            {{-- {{ dd($resolved) }} --}}
+                            <div>RESOLVED</div>
+                            @if($resolved->count() > 0)
+                            @foreach($resolved as $resolve)
+                            <a href="#" data-id="{{ $user->nopeg }}" data-user="{{ $user->name }}"
+                                class="chat-toggle relative rounded-lg px-2 py-2 flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 mb-3 hover:bg-gray-200 hover:cursor-pointer">
+                                <div class="flex-shrink-0">
+                                    <img class="h-10 w-10 rounded-full" src="{{ asset('img/profile.jpg') }}" alt="">
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="focus:outline-none">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm font-bold text-green-600">
+                                                {{ $resolve->name }} ({{ $resolve->conversation_id }})
+                                            </p>
+
+                                            {{-- menampilkan jam terakhir pesan dikirim --}}
+                                            <div class="text-gray-400 text-xs">
+                                                {{ date('H:i', strtotime($resolve->time_latest_message)) }}
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            {{-- menampilkan isi pesan terakhir --}}
+                                            <p class="text-sm text-gray-500 truncate">
+                                                {{ $resolve->latest_message }}
+                                            </p>
+
+                                            {{-- menampilkan jumlah pesan yang belum terbaca --}}
+                                            {{-- @if ($unreadCounts[$user->nopeg] > 0)
+                                            <div id="unread_count_{{ $user->nopeg }}"
+                                                class="text-white text-xs bg-green-400 rounded-full px-1 py-0">
+                                                {{ $unreadCounts[$user->nopeg] }}
+                                            </div>
+                                            @endif --}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            @endforeach
+                            @else
+                            <p>No User in resolved page</p>
+                            @endif
+
                         </div>
                     </div>
                 </div>

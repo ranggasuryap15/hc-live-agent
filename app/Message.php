@@ -7,15 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model
 {
     protected $table = "messages";
-    protected $fillable = ['from_user', 'to_user', 'content', 'is_read'];
+    protected $fillable = ['content', 'is_read', 'conversation_id'];
 
-    public function fromUser()
+    public function conversation()
     {
-        return $this->belongsTo('App\User', 'from_user');
-    }
-
-    public function toUser()
-    {
-        return $this->belongsTo('App\User', 'to_user');
+        return $this->belongsTo('App\Conversation');
     }
 }

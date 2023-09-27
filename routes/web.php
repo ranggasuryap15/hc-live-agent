@@ -14,6 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -28,5 +29,8 @@ Route::post('/send', 'MessagesController@postSendMessage');
 
 // Route for Read Message 
 Route::post('/read-message', 'MessagesController@markAsRead')->name('messages.markAsRead');
+
+// Route for create conversation
+Route::post('/conversation/create', 'ConversationController@create')->name('conversation.create');
 
 // Route::get('/fetch-old-messages', 'MessagesController@getOldMessages');

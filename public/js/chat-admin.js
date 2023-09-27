@@ -70,7 +70,6 @@ $(function () {
 
     // listen for the sedn event, this event wil be triggered on click the send btn
     channel.bind("send", function (data) {
-        console.log(data.data);
         displayMessage(data.data);
     });
 });

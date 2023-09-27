@@ -15,14 +15,12 @@ class CreateMessagesTable extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('from_user');
-            $table->string('to_user');
             $table->text('content');
             $table->boolean('is_read')->default(false);
+            $table->string('conversation_id');
             $table->timestamps();
 
-            $table->foreign('from_user')->references('nopeg')->on('users');
-            $table->foreign('to_user')->references('nopeg')->on('users');
+            $table->foreign('conversation_id')->references('conversation_id')->on('conversations')->onDelete('cascade');
         });
     }
 
@@ -34,5 +32,7 @@ class CreateMessagesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('messages');
+
+        // Schema::disableForeignKeyConstraints();
     }
 }

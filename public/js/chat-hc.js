@@ -7,7 +7,12 @@ $(function () {
 
     let channel = pusher.subscribe("chat");
 
-    loadLatestMessages($("#chat_box"), $("#to_user_nopeg").val());
+    let currentDate = new Date().toJSON().slice(0, 10);
+    let conversation_id = currentDate + "_" + $("#current_user").val();
+    let sender_nopeg = $("#current_user").val();
+    let admin = $("#to_user_nopeg").val();
+
+    loadLatestMessages($("#chat_box"), conversation_id);
 
     $(".chat_input").on("keyup", function () {
         if ($(this).val() != "") {
@@ -15,6 +20,7 @@ $(function () {
                 .parents(".send-area")
                 .find(".btn-chat")
                 .prop("disabled", false);
+            4;
         } else {
             $(this)
                 .parents(".send-area")
@@ -25,10 +31,29 @@ $(function () {
 
     // on click the btn send the message
     $(".btn-chat").on("click", function (e) {
-        send(
-            $(this).attr("data-to-user"),
-            $(".send-area").find(".chat_input").val()
-        );
+        if ($(".chat_input").val() == "Mulai Percakapan") {
+            // create conversation message
+            $.ajax({
+                url: "/conversation/create",
+                data: {
+                    conversation_id: conversation_id,
+                    sender_nopeg: sender_nopeg,
+                    admin: admin,
+                    _token: $("meta[name='csrf-token']").attr("content"),
+                },
+                method: "POST",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                },
+            });
+            // send the message
+        }
+
+        send(conversation_id, $(".send-area").find(".chat_input").val());
     });
 
     // listen for the send event, this event will be triggered on click the send btn
@@ -73,7 +98,7 @@ $(function () {
  * loadLatestMessages
  *
  */
-function loadLatestMessages(container, user_id) {
+function loadLatestMessages(container, conversation_id) {
     let chat_area = container.find(".chat-area");
 
     chat_area.html("");
@@ -81,7 +106,7 @@ function loadLatestMessages(container, user_id) {
     $.ajax({
         url: "/load-latest-messages",
         data: {
-            user_id: user_id,
+            conversation_id: conversation_id,
             _token: $("meta[name='csrf-token']").attr("content"),
         },
         method: "GET",
@@ -107,14 +132,14 @@ function loadLatestMessages(container, user_id) {
 /**
  * send
  */
-function send(to_user, message) {
+function send(conversation_id, message) {
     let send_area = $(".send-area");
 
     $.ajax({
         url: "/send",
         data: {
             _token: $("meta[name='csrf-token']").attr("content"),
-            to_user: to_user,
+            conversation_id: conversation_id,
             message: message,
         },
         method: "POST",
@@ -165,11 +190,24 @@ function getMessageReceiverHtml(message) {
 
 function displayMessage(message) {
     if ($("#current_user").val() == message.from_user_nopeg) {
+        // jika pesan dikirim oleh user yang sedang login
         let senderMessageLine = getMessageSenderHtml(message);
         $("#chat_box").find(".chat-area").append(senderMessageLine);
-    } else if ($("#current_user").val() == message.to_user_nopeg) {
+    } else {
+        // jika pesan dikirim oleh admin atau orang lain
         let receiverMessageLine = getMessageReceiverHtml(message);
         $("#chat_box").find(".chat-area").append(receiverMessageLine);
+        let send_area = $(".send-area");
+        // send_area.find(".loader").remove();
+        send_area.find(".btn-chat").prop("disabled", true);
+        send_area.find(".chat_input").val("");
+        send_area.animate(
+            {
+                scrollTop: send_area.offset().top + send_area.outerHeight(true),
+            },
+            800,
+            "swing"
+        );
     }
 }
 

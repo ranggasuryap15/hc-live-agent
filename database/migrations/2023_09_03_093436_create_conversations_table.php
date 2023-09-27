@@ -15,12 +15,15 @@ class CreateConversationsTable extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('conversation_id')->unique();
             $table->string('sender_nopeg');
+            $table->string('admin');
             $table->boolean('in_queue')->default(true);
             $table->boolean('is_resolved')->default(false);
             $table->timestamps();
 
-            $table->foreign('sender_nopeg')->references('nopeg')->on('users');
+            $table->foreign('sender_nopeg')->references('nopeg')->on('users')->onDelete('cascade');
+            $table->foreign('admin')->references('nopeg')->on('users')->onDelete('cascade'); // admin adalah karyawan HC yang menjadi admin dari Employee Service
         });
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Conversation;
 use App\Lib\PusherFactory;
 use App\Message;
 use App\User;
@@ -30,15 +31,19 @@ class MessagesController extends Controller
      */
     public function getLoadLatestMessages(Request $request)
     {
-        if (!$request->user_id) {
-            return;
+        if (!$request->conversation_id) {
+            return response()->json(['state' => 0, 'message' => $request->conversation_id]);
         }
 
-        $messages = Message::where(function ($query) use ($request) {
-            $query->where('from_user', Auth::user()->nopeg)->where('to_user', $request->user_id);
-        })->orWhere(function ($query) use ($request) {
-            $query->where('from_user', $request->user_id)->where('to_user', Auth::user()->nopeg);
-        })->orderBy('created_at', 'ASC')->get();
+        $messages = DB::table('messages as m')
+            ->select("m.id", "m.content", "m.is_read", "m.created_at", "m.updated_at", "c.conversation_id", "c.sender_nopeg", "c.admin", "c.in_queue", "c.is_resolved")
+            ->join("conversations as c", "m.conversation_id", "=", "c.conversation_id")
+            ->where('m.conversation_id', $request->conversation_id)
+            ->where('c.in_queue', true)
+            ->where('c.is_resolved', false)
+            ->where('c.sender_nopeg', Auth::user()->nopeg)
+            ->get();
+
         $result = [];
 
         foreach ($messages as $message) {
@@ -56,19 +61,14 @@ class MessagesController extends Controller
      */
     public function postSendMessage(Request $request)
     {
-        if (!$request->to_user || !$request->message) {
-            return;
+        if (!$request->conversation_id || !$request->message) {
+            return response()->json(['state' => 0, 'messages' => $request->message]);
         }
 
         $message = new Message();
 
-        $message->from_user = Auth::user()->nopeg;
-
-        $message->to_user = $request->to_user;
-
         $message->content = $request->message;
-
-        // save to database
+        $message->conversation_id = $request->conversation_id;
         $message->save();
 
         // prepare some data to send with the response
@@ -76,16 +76,7 @@ class MessagesController extends Controller
 
         $message->dateHumanReadable = $message->created_at->diffForHumans();
 
-        $fromUser = DB::table('users')->select('*')->where('nopeg', '=', Auth::user()->nopeg)->first();
-        $toUser = DB::table('users')->select('*')->where('nopeg', '=', $request->to_user)->first();
-
-        $message->from_user_name = $fromUser->name;
-
         $message->from_user_nopeg = Auth::user()->nopeg;
-
-        $message->to_user_name = $toUser->name;
-
-        $message->to_user_nopeg = $request->to_user;
 
         PusherFactory::make()->trigger('chat', 'send', ['data' => $message]);
 
@@ -143,9 +134,14 @@ class MessagesController extends Controller
         }
 
         // tandai pesan sebagai sudah dibaca
-        $message = Message::where('from_user', $user->nopeg)
-            ->where('is_read', false)
+        $message = DB::table('messages as m')
+            ->join('conversations as c', 'c.conversation_id', '=', 'c.conversation_id')
+            ->where('c.sender_nopeg', $user->nopeg)
             ->update(['is_read' => true]);
+
+        // $message = Message::where('from_user', $user->nopeg)
+        //     ->where('is_read', false)
+        //     ->update(['is_read' => true]);
 
         return response()->json(['state' => 1, 'data' => $message]);
     }
